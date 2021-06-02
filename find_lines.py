@@ -77,11 +77,15 @@ tbl_rv = np.zeros(len(waves),8)
 tbl_ddv = np.zeros(len(waves),8)
 tbl_dddv = np.zeros(len(waves),8)
 
-print("Let's compute the periodograms of RV...")
+print("Let's compute the periodograms...")
 t = mjd * u.m/u.s
 for i in range(len(waves)):
     rv_line = tbl[:,i,2] * u.m/u.s
     rv_line_err = tbl[:,i,3] * u.m/u.s
+    ddv_line = tbl[:,i,4] #* u.m/u.s
+    ddv_line_err = tbl[:,i,5] #* u.m/u.s
+    dddv_line = tbl[:,i,6] #* u.m/u.s
+    dddv_line_err = tbl[:,i,7] #* u.m/u.s
 
     ls = LombScargle(t,rv_line, rv_line_err)
     frequency, power = ls.autopower()
@@ -92,12 +96,6 @@ for i in range(len(waves)):
     tbl_rv[i,1] = np.nanmean(rv_line)
     tbl_rv[i,2] = np.nanstd(rv_line)
     tbl_rv[i,3:] = frequency_peaks
-np.savetxt(target+'_lines_RV.csv',tbl_rv, header='mjd meanRV stdRV peak1 peak2 peak3 peak4 peak5')
-
-print("Let's compute the periodograms of DDV...")
-for i in range(len(waves)):
-    ddv_line = tbl[:,i,4] #* u.m/u.s
-    ddv_line_err = tbl[:,i,5] #* u.m/u.s
 
     ls = LombScargle(t,ddv_line, ddv_line_err)
     frequency, power = ls.autopower()
@@ -108,12 +106,6 @@ for i in range(len(waves)):
     tbl_ddv[i,1] = np.nanmean(ddv_line)
     tbl_ddv[i,2] = np.nanstd(ddv_line)
     tbl_ddv[i,3:] = frequency_peaks
-np.savetxt(target+'_lines_DDV.csv',tbl_ddv, header='mjd meanDDV stdDDV peak1 peak2 peak3 peak4 peak5')
-
-print("Let's compute the periodograms of DDDV...")
-for i in range(len(waves)):
-    dddv_line = tbl[:,i,6] #* u.m/u.s
-    dddv_line_err = tbl[:,i,7] #* u.m/u.s
 
     ls = LombScargle(t,dddv_line, dddv_line_err)
     frequency, power = ls.autopower()
@@ -124,4 +116,9 @@ for i in range(len(waves)):
     tbl_dddv[i,1] = np.nanmean(dddv_line)
     tbl_dddv[i,2] = np.nanstd(dddv_line)
     tbl_dddv[i,3:] = frequency_peaks
+
+np.savetxt(target+'_lines_RV.csv',tbl_rv, header='mjd meanRV stdRV peak1 peak2 peak3 peak4 peak5')
+np.savetxt(target+'_lines_DDV.csv',tbl_ddv, header='mjd meanDDV stdDDV peak1 peak2 peak3 peak4 peak5')
 np.savetxt(target+'_lines_DDDV.csv',tbl_ddv, header='mjd meanDDDV stdDDDV peak1 peak2 peak3 peak4 peak5')
+
+print("DONE.")
