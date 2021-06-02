@@ -119,6 +119,6 @@ for i in range(len(waves)):
 
 np.savetxt(target+'_lines_RV.csv',tbl_rv, header='mjd meanRV stdRV peak1 peak2 peak3 peak4 peak5')
 np.savetxt(target+'_lines_DDV.csv',tbl_ddv, header='mjd meanDDV stdDDV peak1 peak2 peak3 peak4 peak5')
-np.savetxt(target+'_lines_DDDV.csv',tbl_ddv, header='mjd meanDDDV stdDDDV peak1 peak2 peak3 peak4 peak5')
+np.savetxt(target+'_lines_DDDV.csv',tbl_dddv, header='mjd meanDDDV stdDDDV peak1 peak2 peak3 peak4 peak5')
 
 print("DONE.")
