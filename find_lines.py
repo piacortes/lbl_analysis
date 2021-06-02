@@ -93,8 +93,8 @@ for i in range(len(waves)):
     power_peaks = power[ind_peaks]
     frequency_peaks = frequency[ind_peaks]
     tbl_rv[i,0] = waves[i]
-    tbl_rv[i,1] = np.nanmean(rv_line)
-    tbl_rv[i,2] = np.nanstd(rv_line)
+    tbl_rv[i,1] = np.nanmean(tbl[:,i,2])
+    tbl_rv[i,2] = np.nanstd(tbl[:,i,2])
     tbl_rv[i,3:] = frequency_peaks
 
     ls = LombScargle(t,ddv_line, ddv_line_err)
