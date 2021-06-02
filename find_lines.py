@@ -89,7 +89,7 @@ for i in range(len(waves)):
 
     ls = LombScargle(t,rv_line, rv_line_err)
     frequency, power = ls.autopower()
-    ind_peaks = np.argpartition(power, -5)[-5:] #highest five peaks in order
+    ind_peaks = np.argpartition(power[power>(1/1.5)], -5)[-5:] #highest five peaks in order
     power_peaks = power[ind_peaks]
     frequency_peaks = frequency[ind_peaks]
     tbl_rv[i,0] = waves[i]
@@ -99,7 +99,7 @@ for i in range(len(waves)):
 
     ls = LombScargle(t,ddv_line, ddv_line_err)
     frequency, power = ls.autopower()
-    ind_peaks = np.argpartition(power, -5)[-5:] #highest five peaks in order
+    ind_peaks = np.argpartition(power[power>(1/1.5)], -5)[-5:] #highest five peaks in order
     power_peaks = power[ind_peaks]
     frequency_peaks = frequency[ind_peaks]
     tbl_ddv[i,0] = waves[i]
@@ -109,7 +109,7 @@ for i in range(len(waves)):
 
     ls = LombScargle(t,dddv_line, dddv_line_err)
     frequency, power = ls.autopower()
-    ind_peaks = np.argpartition(power, -5)[-5:] #highest five peaks in order
+    ind_peaks = np.argpartition(power[power>(1/1.5)], -5)[-5:] #highest five peaks in order
     power_peaks = power[ind_peaks]
     frequency_peaks = frequency[ind_peaks]
     tbl_dddv[i,0] = waves[i]
