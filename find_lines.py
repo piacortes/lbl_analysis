@@ -73,9 +73,9 @@ time.sleep(1)
 end = time.time()
 print('Table of lines ready. It took {0} seconds.'.format(np.round((end-start),2)))
 
-tbl_rv = np.zeros(len(waves),8)
-tbl_ddv = np.zeros(len(waves),8)
-tbl_dddv = np.zeros(len(waves),8)
+tbl_rv = np.zeros([len(waves),8])
+tbl_ddv = np.zeros([len(waves),8])
+tbl_dddv = np.zeros([len(waves),8])
 
 print("Let's compute the periodograms...")
 t = mjd * u.m/u.s
