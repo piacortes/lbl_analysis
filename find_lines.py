@@ -6,8 +6,10 @@ import glob
 import time
 from astropy.timeseries import LombScargle
 import astropy.units as u
+import pdb
 
 files = glob.glob('/net/GSP/users/pcortes/LBL/lblrv_GL205/*.fits')
+#files = files[:100]
 target = 'GL205'
 print('Processing {0} files'.format(len(files)))
 
@@ -78,7 +80,7 @@ tbl_ddv = np.zeros([len(waves),8])
 tbl_dddv = np.zeros([len(waves),8])
 
 print("Let's compute the periodograms...")
-t = mjd * u.m/u.s
+t = mjd * u.day
 for i in range(len(waves)):
     rv_line = tbl[:,i,2] * u.m/u.s
     rv_line_err = tbl[:,i,3] * u.m/u.s
@@ -86,43 +88,56 @@ for i in range(len(waves)):
     ddv_line_err = tbl[:,i,5] #* u.m/u.s
     dddv_line = tbl[:,i,6] #* u.m/u.s
     dddv_line_err = tbl[:,i,7] #* u.m/u.s
+    
+    # Remove nans
+    mask_rv = np.isfinite(rv_line)
+    mask_ddv = np.isfinite(ddv_line)
+    mask_dddv = np.isfinite(dddv_line)
 
-    ls = LombScargle(t,rv_line, rv_line_err)
+    ls = LombScargle(t[mask_rv],rv_line[mask_rv], rv_line_err[mask_rv])
     frequency, power = ls.autopower()
-    ind_peaks = np.argpartition(power[frequency>(1/1.5)], -5)[-5:] #highest five peaks in order
+    period = 1/frequency
+    ind_peaks = np.argpartition(power[period.value>1.5], -5)[-5:] #highest five peaks in order
+    #print(ind_peaks)
+    #pdb.set_trace()
     power_peaks = power[ind_peaks]
     frequency_peaks = frequency[ind_peaks]
+    period_peaks = period[ind_peaks]
     tbl_rv[i,0] = waves[i]
     tbl_rv[i,1] = np.nanmean(tbl[:,i,2])
     tbl_rv[i,2] = np.nanstd(tbl[:,i,2])
     try:
-        tbl_rv[i,3:] = 1/frequency_peaks
+        tbl_rv[i,3:] = period_peaks
     except Exception as e:
         tbl_rv[i,3:] = np.nan, np.nan, np.nan, np.nan, np.nan
 
-    ls = LombScargle(t,ddv_line, ddv_line_err)
+    ls = LombScargle(t[mask_ddv],ddv_line[mask_ddv], ddv_line_err[mask_ddv])
     frequency, power = ls.autopower()
-    ind_peaks = np.argpartition(power[frequency>(1/1.5)], -5)[-5:] #highest five peaks in order
+    period = 1/frequency
+    ind_peaks = np.argpartition(power[period.value>1.5], -5)[-5:] #highest five peaks in order
     power_peaks = power[ind_peaks]
     frequency_peaks = frequency[ind_peaks]
+    period_peaks = period[ind_peaks]
     tbl_ddv[i,0] = waves[i]
     tbl_ddv[i,1] = np.nanmean(ddv_line)
     tbl_ddv[i,2] = np.nanstd(ddv_line)
     try:
-        tbl_ddv[i,3:] = 1/frequency_peaks
+        tbl_ddv[i,3:] = periods_peaks
     except Exception as e:
         tbl_ddv[i,3:] = np.nan, np.nan, np.nan, np.nan, np.nan
 
-    ls = LombScargle(t,dddv_line, dddv_line_err)
+    ls = LombScargle(t[mask_dddv],dddv_line[mask_dddv], dddv_line_err[mask_dddv])
     frequency, power = ls.autopower()
-    ind_peaks = np.argpartition(power[frequency>(1/1.5)], -5)[-5:] #highest five peaks in order
+    period = 1/frequency
+    ind_peaks = np.argpartition(power[period.value>1.5], -5)[-5:] #highest five peaks in order
     power_peaks = power[ind_peaks]
     frequency_peaks = frequency[ind_peaks]
+    period_peaks = period[ind_peaks]
     tbl_dddv[i,0] = waves[i]
     tbl_dddv[i,1] = np.nanmean(dddv_line)
     tbl_dddv[i,2] = np.nanstd(dddv_line)
     try:
-        tbl_dddv[i,3:] = 1/frequency_peaks
+        tbl_dddv[i,3:] = period_peaks
     except Exception as e:
         tbl_dddv[i,3:] = np.nan, np.nan, np.nan, np.nan, np.nan
 
