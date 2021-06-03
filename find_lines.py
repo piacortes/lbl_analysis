@@ -95,7 +95,10 @@ for i in range(len(waves)):
     tbl_rv[i,0] = waves[i]
     tbl_rv[i,1] = np.nanmean(tbl[:,i,2])
     tbl_rv[i,2] = np.nanstd(tbl[:,i,2])
-    tbl_rv[i,3:] = frequency_peaks
+    try:
+        tbl_rv[i,3:] = 1/frequency_peaks
+    except Exception as e:
+        tbl_rv[i,3:] = np.nan, np.nan, np.nan, np.nan, np.nan
 
     ls = LombScargle(t,ddv_line, ddv_line_err)
     frequency, power = ls.autopower()
@@ -105,7 +108,10 @@ for i in range(len(waves)):
     tbl_ddv[i,0] = waves[i]
     tbl_ddv[i,1] = np.nanmean(ddv_line)
     tbl_ddv[i,2] = np.nanstd(ddv_line)
-    tbl_ddv[i,3:] = frequency_peaks
+    try:
+        tbl_ddv[i,3:] = 1/frequency_peaks
+    except Exception as e:
+        tbl_ddv[i,3:] = np.nan, np.nan, np.nan, np.nan, np.nan
 
     ls = LombScargle(t,dddv_line, dddv_line_err)
     frequency, power = ls.autopower()
@@ -115,10 +121,13 @@ for i in range(len(waves)):
     tbl_dddv[i,0] = waves[i]
     tbl_dddv[i,1] = np.nanmean(dddv_line)
     tbl_dddv[i,2] = np.nanstd(dddv_line)
-    tbl_dddv[i,3:] = frequency_peaks
+    try:
+        tbl_dddv[i,3:] = 1/frequency_peaks
+    except Exception as e:
+        tbl_dddv[i,3:] = np.nan, np.nan, np.nan, np.nan, np.nan
 
-np.savetxt(target+'_lines_RV.csv',tbl_rv, header='mjd meanRV stdRV peak1 peak2 peak3 peak4 peak5')
-np.savetxt(target+'_lines_DDV.csv',tbl_ddv, header='mjd meanDDV stdDDV peak1 peak2 peak3 peak4 peak5')
-np.savetxt(target+'_lines_DDDV.csv',tbl_dddv, header='mjd meanDDDV stdDDDV peak1 peak2 peak3 peak4 peak5')
+np.savetxt(target+'_lines_RV.csv',tbl_rv, header='wavelength meanRV stdRV peak1 peak2 peak3 peak4 peak5')
+np.savetxt(target+'_lines_DDV.csv',tbl_ddv, header='wavelength meanDDV stdDDV peak1 peak2 peak3 peak4 peak5')
+np.savetxt(target+'_lines_DDDV.csv',tbl_dddv, header='wavelength meanDDDV stdDDDV peak1 peak2 peak3 peak4 peak5')
 
 print("DONE.")
