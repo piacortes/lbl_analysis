@@ -88,58 +88,62 @@ for i in range(len(waves)):
     ddv_line_err = tbl[:,i,5] #* u.m/u.s
     dddv_line = tbl[:,i,6] #* u.m/u.s
     dddv_line_err = tbl[:,i,7] #* u.m/u.s
-    
+
     # Remove nans
     mask_rv = np.isfinite(rv_line)
     mask_ddv = np.isfinite(ddv_line)
     mask_dddv = np.isfinite(dddv_line)
 
-    ls = LombScargle(t[mask_rv],rv_line[mask_rv], rv_line_err[mask_rv])
-    frequency, power = ls.autopower()
-    period = 1/frequency
-    ind_peaks = np.argpartition(power[period.value>1.5], -5)[-5:] #highest five peaks in order
-    #print(ind_peaks)
-    #pdb.set_trace()
-    power_peaks = power[ind_peaks]
-    frequency_peaks = frequency[ind_peaks]
-    period_peaks = period[ind_peaks]
-    tbl_rv[i,0] = waves[i]
-    tbl_rv[i,1] = np.nanmean(tbl[:,i,2])
-    tbl_rv[i,2] = np.nanstd(tbl[:,i,2])
-    try:
-        tbl_rv[i,3:] = period_peaks
-    except Exception as e:
-        tbl_rv[i,3:] = np.nan, np.nan, np.nan, np.nan, np.nan
+    if rv_line[mask_rv]:
+        ls = LombScargle(t[mask_rv],rv_line[mask_rv], rv_line_err[mask_rv])
+        frequency, power = ls.autopower()
+        period = 1/frequency
+        ind_peaks = np.argpartition(power[period.value>1.5], -5)[-5:] #highest five peaks in order
+        #print(ind_peaks)
+        #pdb.set_trace()
+        power_peaks = power[ind_peaks]
+        frequency_peaks = frequency[ind_peaks]
+        period_peaks = period[ind_peaks]
+        tbl_rv[i,0] = waves[i]
+        tbl_rv[i,1] = np.nanmean(tbl[:,i,2])
+        tbl_rv[i,2] = np.nanstd(tbl[:,i,2])
+        try:
+            tbl_rv[i,3:] = period_peaks
+        except Exception as e:
+            tbl_rv[i,3:] = np.nan, np.nan, np.nan, np.nan, np.nan
 
-    ls = LombScargle(t[mask_ddv],ddv_line[mask_ddv], ddv_line_err[mask_ddv])
-    frequency, power = ls.autopower()
-    period = 1/frequency
-    ind_peaks = np.argpartition(power[period.value>1.5], -5)[-5:] #highest five peaks in order
-    power_peaks = power[ind_peaks]
-    frequency_peaks = frequency[ind_peaks]
-    period_peaks = period[ind_peaks]
-    tbl_ddv[i,0] = waves[i]
-    tbl_ddv[i,1] = np.nanmean(ddv_line)
-    tbl_ddv[i,2] = np.nanstd(ddv_line)
-    try:
-        tbl_ddv[i,3:] = periods_peaks
-    except Exception as e:
-        tbl_ddv[i,3:] = np.nan, np.nan, np.nan, np.nan, np.nan
+        ls = LombScargle(t[mask_ddv],ddv_line[mask_ddv], ddv_line_err[mask_ddv])
+        frequency, power = ls.autopower()
+        period = 1/frequency
+        ind_peaks = np.argpartition(power[period.value>1.5], -5)[-5:] #highest five peaks in order
+        power_peaks = power[ind_peaks]
+        frequency_peaks = frequency[ind_peaks]
+        period_peaks = period[ind_peaks]
+        tbl_ddv[i,0] = waves[i]
+        tbl_ddv[i,1] = np.nanmean(ddv_line)
+        tbl_ddv[i,2] = np.nanstd(ddv_line)
+        try:
+            tbl_ddv[i,3:] = periods_peaks
+        except Exception as e:
+            tbl_ddv[i,3:] = np.nan, np.nan, np.nan, np.nan, np.nan
 
-    ls = LombScargle(t[mask_dddv],dddv_line[mask_dddv], dddv_line_err[mask_dddv])
-    frequency, power = ls.autopower()
-    period = 1/frequency
-    ind_peaks = np.argpartition(power[period.value>1.5], -5)[-5:] #highest five peaks in order
-    power_peaks = power[ind_peaks]
-    frequency_peaks = frequency[ind_peaks]
-    period_peaks = period[ind_peaks]
-    tbl_dddv[i,0] = waves[i]
-    tbl_dddv[i,1] = np.nanmean(dddv_line)
-    tbl_dddv[i,2] = np.nanstd(dddv_line)
-    try:
-        tbl_dddv[i,3:] = period_peaks
-    except Exception as e:
-        tbl_dddv[i,3:] = np.nan, np.nan, np.nan, np.nan, np.nan
+        ls = LombScargle(t[mask_dddv],dddv_line[mask_dddv], dddv_line_err[mask_dddv])
+        frequency, power = ls.autopower()
+        period = 1/frequency
+        ind_peaks = np.argpartition(power[period.value>1.5], -5)[-5:] #highest five peaks in order
+        power_peaks = power[ind_peaks]
+        frequency_peaks = frequency[ind_peaks]
+        period_peaks = period[ind_peaks]
+        tbl_dddv[i,0] = waves[i]
+        tbl_dddv[i,1] = np.nanmean(dddv_line)
+        tbl_dddv[i,2] = np.nanstd(dddv_line)
+        try:
+            tbl_dddv[i,3:] = period_peaks
+        except Exception as e:
+            tbl_dddv[i,3:] = np.nan, np.nan, np.nan, np.nan, np.nan
+
+    else:
+        print('next line.')
 
 np.savetxt(target+'_lines_RV.csv',tbl_rv, header='wavelength meanRV stdRV peak1 peak2 peak3 peak4 peak5')
 np.savetxt(target+'_lines_DDV.csv',tbl_ddv, header='wavelength meanDDV stdDDV peak1 peak2 peak3 peak4 peak5')
