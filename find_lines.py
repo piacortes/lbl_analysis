@@ -80,10 +80,10 @@ tbl_ddv = np.zeros([len(waves),8])
 tbl_dddv = np.zeros([len(waves),8])
 
 print("Let's compute the periodograms...")
-t = mjd * u.day
+#t = mjd * u.day
 for i in range(len(waves)):
-    rv_line = tbl[:,i,2] * u.m/u.s
-    rv_line_err = tbl[:,i,3] * u.m/u.s
+    rv_line = tbl[:,i,2] #* u.m/u.s
+    rv_line_err = tbl[:,i,3] # * u.m/u.s
     ddv_line = tbl[:,i,4] #* u.m/u.s
     ddv_line_err = tbl[:,i,5] #* u.m/u.s
     dddv_line = tbl[:,i,6] #* u.m/u.s
@@ -93,10 +93,13 @@ for i in range(len(waves)):
     mask_rv = np.isfinite(rv_line)
     mask_ddv = np.isfinite(ddv_line)
     mask_dddv = np.isfinite(dddv_line)
-
-    if rv_line[mask_rv]:
-        pdb.set_trace()
-        print('hola')
+    #pdb.set_trace()
+    if len(rv_line[mask_rv])>0:
+        #pdb.set_trace()
+        #print('hola')
+        t = mjd * u.day
+        rv_line = rv_line * u.m/u.s
+        rv_line_err = rv_line_err * u.m/u.s
         ls = LombScargle(t[mask_rv],rv_line[mask_rv], rv_line_err[mask_rv])
         frequency, power = ls.autopower()
         period = 1/frequency
@@ -145,7 +148,7 @@ for i in range(len(waves)):
             tbl_dddv[i,3:] = np.nan, np.nan, np.nan, np.nan, np.nan
 
     else:
-        print('next line.')
+        print('RV time series full of nan. Moving to the next line.')
 
 np.savetxt(target+'_lines_RV.csv',tbl_rv, header='wavelength meanRV stdRV peak1 peak2 peak3 peak4 peak5')
 np.savetxt(target+'_lines_DDV.csv',tbl_ddv, header='wavelength meanDDV stdDDV peak1 peak2 peak3 peak4 peak5')
