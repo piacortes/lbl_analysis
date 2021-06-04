@@ -95,6 +95,7 @@ for i in range(len(waves)):
     mask_dddv = np.isfinite(dddv_line)
 
     if rv_line[mask_rv]:
+        print('hola')
         ls = LombScargle(t[mask_rv],rv_line[mask_rv], rv_line_err[mask_rv])
         frequency, power = ls.autopower()
         period = 1/frequency
